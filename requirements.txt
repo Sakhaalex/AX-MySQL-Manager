@@ -1,0 +1,3 @@
+Python libraries:
+tk //tkinter
+pymysql 
