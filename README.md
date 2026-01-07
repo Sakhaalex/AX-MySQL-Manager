@@ -1,69 +1,99 @@
-AX Watchlist Manager
-A simple desktop application to manage a personal movie watchlist using Python, Tkinter, and MySQL.
+A lightweight, tab-based desktop application to manage records in a MySQL database using Python, Tkinter, and pymysql. Designed to be beginner-friendly, generic, and extendable for personal or small-scale data management projects.
 
 Overview
-This project provides a clean GUI-based editor for managing movie records stored in a MySQL database.
-It is designed to be generic, extendable, and beginner-friendly.
 
-The project currently supports:
-• Viewing all movie records
-• Editing a single selected record
-• Filtering records using multiple fields
-• Non-destructive operations (no delete by default)
+This project provides a clean GUI-based interface for managing records stored in a MySQL database. It emphasizes:
 
-Project Files
-editor_single.py
-A lightweight editor focused only on updating one record at a time.
-Best used when you want stability and minimal UI complexity.
+Easy data entry and editing via forms
 
-manager_master.py
-The main application with a tab-based interface.
-Includes:
-• Editor tab for updating records
-• Filter tab for searching and sorting data
+Filtering and searching without destructive operations
+
+CSV import/export for batch operations
+
+Beginner-friendly and extendable code
+
+While originally designed for a movie watchlist, the structure is generic and can be adapted for other datasets.
+
+Features
+
+Editor Tab – View and edit single records in detail
+
+Filter Tab – Search and filter data by multiple fields
+
+Insert Tab – Add new records and dynamically manage table fields
+
+CSV → SQL Tab – Import CSV files into a MySQL table
+
+SQL → CSV Tab – Export selected data to CSV with optional filters
+
+Non-destructive operations – No records are deleted by default
+
+Project Structure
+
+editor_single.py – Lightweight editor for updating individual records
+
+manager_master.py – Full tab-based application with all features
+
+README.md – Project documentation
 
 Database Requirements
-Database name: Watchlist
-Required table: Movies
 
-Minimum columns:
-• movie_id (PRIMARY KEY)
-• name
-• year
-• rating
-• language
-• industry
+The application works with MySQL databases. Minimal required setup:
 
-Optional columns (used only if present):
-• actors
-• director
+Database Name: Any (update in code)
 
-No errors occur if optional columns are missing.
+Table Name: Movies (or any table, as long as columns match)
 
-How to Run
+Minimum Columns
+Column	Type	Notes
+movie_id	PRIMARY KEY	Unique identifier
+name	TEXT	Movie or record name
+year	INT	Optional
+rating	FLOAT	Optional
+language	TEXT	Optional
+industry	TEXT	Optional
 
-Create the MySQL database and Movies table
+Optional columns such as actors or director are supported but not required. The app is designed to ignore missing optional columns gracefully.
 
-Update DB credentials in the Python file
+Installation & Setup
+
+Install Python 3.8+
+
+Install dependencies:
+
+pip install pymysql
+
+
+Create a MySQL database and table, or use an existing one.
+
+Update database credentials in the Python script (host, user, password, database).
 
 Run the application:
 
 python manager_master.py
 
-
 Design Philosophy
-• Single database, generic structure
-• Manual control over data
-• Editor-first workflow
-• Filters instead of destructive searches
-• Beginner-readable code
+
+Generic & Extendable – Designed to adapt to different datasets beyond movies
+
+Manual Control – Focus on explicit data entry, field management, and editing
+
+Editor-First Workflow – Prevents accidental data loss, emphasizes safe operations
+
+Beginner-Friendly – Clean code and UI to understand and extend easily
 
 Future Extensions
-• Songs / Series tables
-• Checkbox-based filters
-• Column sorting
-• Import from CSV
-• Multi-database support
+
+Add support for additional tables (songs, series, etc.)
+
+Multi-database support
+
+Advanced filtering with checkboxes and dynamic queries
+
+Column sorting in the GUI
+
+More robust CSV import/export with field mapping
 
 License
-Open for personal and educational use.# AX-MySQL-Manager
+
+Open for personal, educational, or non-commercial use.
