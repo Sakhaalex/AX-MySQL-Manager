@@ -405,6 +405,93 @@ ttk.Button(
     command=insert_csv_to_sql,
     width=25
 ).pack(pady=15)
+# =====================================================
+# TAB 6 : SQL → DELETE
+# =====================================================
+delete_tab = ttk.Frame(notebook)
+notebook.add(delete_tab, text="Delete Records")
+
+del_box = ttk.LabelFrame(delete_tab, text="Delete Records from Table", padding=10)
+del_box.pack(padx=20, pady=20, fill="both", expand=True)
+
+db_del = labeled_entry(del_box, "Database Name")
+table_del = labeled_entry(del_box, "Table Name")
+where_del = labeled_entry(del_box, "WHERE Clause (optional)")
+
+del_tree_frame = ttk.Frame(del_box)
+del_tree_frame.pack(fill="both", expand=True, pady=10)
+
+del_tree = ttk.Treeview(del_tree_frame)
+del_scroll = ttk.Scrollbar(del_tree_frame, orient="vertical", command=del_tree.yview)
+del_tree.configure(yscrollcommand=del_scroll.set)
+del_tree.pack(side="left", fill="both", expand=True)
+del_scroll.pack(side="left", fill="y")
+
+# Dictionary to store column names
+del_columns = []
+
+def load_delete_records():
+    global del_columns
+    db = db_del.get().strip()
+    table = table_del.get().strip()
+    if not db or not table:
+        messagebox.showerror("Error", "Database and table required")
+        return
+    try:
+        cur.execute(f"USE `{db}`")
+        # Get columns
+        cur.execute(f"DESCRIBE `{table}`")
+        cols = [row[0] for row in cur.fetchall()]
+        del_columns = cols
+
+        # Clear previous Treeview
+        del_tree.delete(*del_tree.get_children())
+        del_tree.config(columns=cols, show="headings")
+        for c in cols:
+            del_tree.heading(c, text=c.upper())
+            del_tree.column(c, width=120)
+
+        # Fetch data
+        q = f"SELECT * FROM `{table}`"
+        where = where_del.get().strip()
+        if where:
+            q += f" WHERE {where}"
+        cur.execute(q)
+        rows = cur.fetchall()
+        for r in rows:
+            del_tree.insert("", "end", values=r)
+    except Exception as e:
+        messagebox.showerror("Error", str(e))
+
+def delete_records():
+    db = db_del.get().strip()
+    table = table_del.get().strip()
+    selected = del_tree.selection()
+    if not db or not table:
+        messagebox.showerror("Error", "Database and table required")
+        return
+    if not selected:
+        messagebox.showerror("Error", "Select at least one record to delete")
+        return
+
+    confirm = messagebox.askyesno("Confirm Delete", f"Are you sure you want to delete {len(selected)} record(s)?")
+    if not confirm:
+        return
+
+    try:
+        cur.execute(f"USE `{db}`")
+        pk_col = del_columns[0]  # Assumes first column is PK
+        for s in selected:
+            row = del_tree.item(s)["values"]
+            cur.execute(f"DELETE FROM `{table}` WHERE `{pk_col}`=%s", (row[0],))
+        conn.commit()
+        load_delete_records()
+        messagebox.showinfo("Deleted", f"{len(selected)} record(s) deleted successfully")
+    except Exception as e:
+        messagebox.showerror("Error", str(e))
+
+ttk.Button(del_box, text="Load Records", command=load_delete_records).pack(pady=5)
+ttk.Button(del_box, text="Delete Selected", command=delete_records).pack(pady=5)
 
 # ================================
 # INIT
